@@ -12,7 +12,7 @@ public interface NotInCacheMethod<T> {
 	/**
 	 * 回调执行方法
 	 * @return
-	 * @throws Throwable
+	 * @throws Throwable 
 	 */
 	public T invoke() throws Throwable;
 	

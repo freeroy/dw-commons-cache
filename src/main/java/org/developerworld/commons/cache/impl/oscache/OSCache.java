@@ -3,6 +3,7 @@ package org.developerworld.commons.cache.impl.oscache;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,13 +24,54 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 	private Cache cache;
 	private String keyPrefix;
 
+	public OSCache(Cache cache) {
+		this(null, cache);
+	}
+
+	public OSCache(String keyPrefix, Cache cache) {
+		this.keyPrefix = keyPrefix;
+		this.cache = cache;
+	}
+
 	/**
-	 * 获取keys缓存的key
+	 * 构建key
+	 * 
+	 * @param key
+	 * @return
+	 */
+	private String buildKey(String key) {
+		if (StringUtils.isNotBlank(keyPrefix))
+			return keyPrefix + "_" + key;
+		return key;
+	}
+
+	/**
+	 * 返回内部缓存对象
 	 * 
 	 * @return
 	 */
-	private String getKeysKey() {
-		return this.getClass().getName() + "_" + keyPrefix + "_keys";
+	public Cache getCache() {
+		return cache;
+	}
+
+	public void put(String key, Object value) {
+		cache.putInCache(buildKey(key), value);
+		updateKeys(key, false);
+	}
+
+	public Object get(String key) {
+		Object rst = null;
+		try {
+			rst = cache.getFromCache(buildKey(key));
+		} catch (NeedsRefreshException e) {
+			log.error(e);
+		}
+		return rst;
+	}
+
+	public void remove(String key) {
+		cache.removeEntry(buildKey(key));
+		updateKeys(key, true);
 	}
 
 	/**
@@ -45,42 +87,22 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 		} catch (NeedsRefreshException e) {
 			log.error(e);
 		}
-		if (keys == null) {
+		if (keys == null)
 			keys = new LinkedHashSet<String>();
-			cache.putInCache(keysKey, keys);
-		}
-		if (isRemove && keys.contains(key)) {
+		if (isRemove && keys.contains(key))
 			keys.remove(key);
-			cache.putInCache(keysKey, keys);
-		} else if (!keys.contains(key)) {
+		else if (!keys.contains(key))
 			keys.add(key);
-			cache.putInCache(keysKey, keys);
-		}
+		cache.putInCache(keysKey, keys);
 	}
 
-	public OSCache(String keyPrefix, Cache cache) {
-		this.keyPrefix = keyPrefix;
-		this.cache = cache;
-	}
-
-	public void put(String key, Object value) {
-		cache.putInCache(keyPrefix + "_" + key, value);
-		updateKeys(key, false);
-	}
-
-	public Object get(String key) {
-		Object rst = null;
-		try {
-			rst = cache.getFromCache(keyPrefix + "_" + key);
-		} catch (NeedsRefreshException e) {
-			log.error(e);
-		}
-		return rst;
-	}
-
-	public void remove(String key) {
-		cache.removeEntry(keyPrefix + "_" + key);
-		updateKeys(key, true);
+	/**
+	 * 获取keys缓存的key
+	 * 
+	 * @return
+	 */
+	private String getKeysKey() {
+		return this.getClass().getName() + "_" + keyPrefix + "_keys";
 	}
 
 	public void removeAll() {

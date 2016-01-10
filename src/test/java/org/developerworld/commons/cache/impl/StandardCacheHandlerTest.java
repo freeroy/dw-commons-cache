@@ -1,11 +1,11 @@
-package org.developerworld.commons.cache.handler.simple;
+package org.developerworld.commons.cache.impl;
 
 import org.developerworld.commons.cache.impl.StandardCacheHandler;
 import org.developerworld.commons.cache.impl.StandardCacheKeyGenerator;
 import org.developerworld.commons.cache.impl.ehcache.EHCacheManager;
 import org.junit.Test;
 
-public class SimpleCacheHandlerTest {
+public class StandardCacheHandlerTest {
 
 	@Test
 	public void test(){

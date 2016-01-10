@@ -17,12 +17,12 @@ public class EHCache implements org.developerworld.commons.cache.Cache {
 
 	Cache cache;
 
-	public Cache getCache() {
-		return cache;
-	}
-
 	public EHCache(Cache cache) {
 		this.cache = cache;
+	}
+
+	public Cache getCache() {
+		return cache;
 	}
 
 	public void put(String key, Object value) {

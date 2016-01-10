@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.developerworld.commons</groupId>
 		<artifactId>dw-commons-parent</artifactId>
-		<version>0.0.4</version>
+		<version>0.0.5</version>
 		<relativePath>../dw-commons-parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>dw-commons-cache</artifactId>
 	<packaging>jar</packaging>
 	<name>dw-commons-cache</name>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<description>缓存框架工具包</description>
 
 	<!-- scm配置 -->
@@ -22,6 +22,12 @@
 	</scm>
 
 	<dependencies>
+		<!-- Memcached-Java-Client -->
+		<dependency>
+			<groupId>org.developerworld.3rdparty.memcached</groupId>
+			<artifactId>memcached-java-client</artifactId>
+			<version>2.6.6</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -41,6 +47,10 @@
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>oscache</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>commons-pool</groupId>
+		    <artifactId>commons-pool</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

@@ -58,8 +58,8 @@ public class StandardCacheHandler implements CacheHandler {
 			getCache(cacheName).put(cacheKey, data);
 			// 更新缓存记录树
 			updateCacheNode(cacheName, cacheNodes, cacheKey);
-		} catch (Throwable t) {
-			log.error(t);
+		} catch (Exception e) {
+			log.error(e);
 		}
 	}
 
@@ -102,13 +102,12 @@ public class StandardCacheHandler implements CacheHandler {
 	}
 
 	public <T> T getFromCache(String cacheName, String[] cacheNodes,
-			String cacheKey, NotInCacheMethod<T> notInCacheMethod)
-			throws Throwable {
+			String cacheKey, NotInCacheMethod<T> notInCacheMethod) throws Throwable{
 		T rst = null;
 		// 根据key获取数据
 		try {
 			rst = (T) getCache(cacheName).get(cacheKey);
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			log.error(t);
 		}
 		// 若数据不存在，则执行对应方法获取
