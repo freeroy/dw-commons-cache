@@ -9,19 +9,19 @@ public class Test {
 	
 	private static MemcachedManager cacheManager;
 	
-	@BeforeClass
+	//@BeforeClass
 	public static void beforeClass(){
 		cacheManager=new MemcachedManager();
 		cacheManager.setServers(new String[]{"127.0.0.1:11211"});
 		cacheManager.init();
 	}
 	
-	@AfterClass
+	//@AfterClass
 	public static void afterClass(){
 		cacheManager.destory();
 	}
 
-	@org.junit.Test
+	//@org.junit.Test
 	public void test(){
 		Memcached cache=(Memcached) cacheManager.getCache(null);
 		System.out.println(cache.get("data"));
