@@ -19,6 +19,12 @@ public interface CacheManager {
 	public void destory();
 	
 	/**
+	 * 获取缓存对象
+	 * @return
+	 */
+	public Cache getCache();
+	
+	/**
 	 * 根据缓存名，获取缓存对象
 	 * @param cacheName
 	 * @return

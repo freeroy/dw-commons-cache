@@ -80,212 +80,114 @@ public class MemcachedManager implements org.developerworld.commons.cache.CacheM
 	// 自定义序列化传输编码器
 	private TransCoder transCoder;
 
+	private Long cacheExpiryTime;
+
 	public void setPoolName(String poolName) {
 		this.poolName = poolName;
-	}
-
-	public SockIOPool getSockIOPool() {
-		return sockIOPool;
 	}
 
 	public void setSockIOPool(SockIOPool sockIOPool) {
 		this.sockIOPool = sockIOPool;
 	}
 
-	public String[] getServers() {
-		return servers;
-	}
-
 	public void setServers(String[] servers) {
 		this.servers = servers;
-	}
-
-	public Integer[] getWeights() {
-		return weights;
 	}
 
 	public void setWeights(Integer[] weights) {
 		this.weights = weights;
 	}
 
-	public Boolean getFailover() {
-		return failover;
-	}
-
 	public void setFailover(Boolean failover) {
 		this.failover = failover;
-	}
-
-	public Integer getInitConn() {
-		return initConn;
 	}
 
 	public void setInitConn(Integer initConn) {
 		this.initConn = initConn;
 	}
 
-	public Integer getMinConn() {
-		return minConn;
-	}
-
 	public void setMinConn(Integer minConn) {
 		this.minConn = minConn;
-	}
-
-	public Integer getMaxConn() {
-		return maxConn;
 	}
 
 	public void setMaxConn(Integer maxConn) {
 		this.maxConn = maxConn;
 	}
 
-	public Long getMaxIdle() {
-		return maxIdle;
-	}
-
 	public void setMaxIdle(Long maxIdle) {
 		this.maxIdle = maxIdle;
-	}
-
-	public Integer getMaintSleep() {
-		return maintSleep;
 	}
 
 	public void setMaintSleep(Integer maintSleep) {
 		this.maintSleep = maintSleep;
 	}
 
-	public Boolean getNagle() {
-		return nagle;
-	}
-
 	public void setNagle(Boolean nagle) {
 		this.nagle = nagle;
-	}
-
-	public Integer getSocketTO() {
-		return socketTO;
 	}
 
 	public void setSocketTO(Integer socketTO) {
 		this.socketTO = socketTO;
 	}
 
-	public Integer getSocketConnectTO() {
-		return socketConnectTO;
-	}
-
 	public void setSocketConnectTO(Integer socketConnectTO) {
 		this.socketConnectTO = socketConnectTO;
-	}
-
-	public Boolean getAliveCheck() {
-		return aliveCheck;
 	}
 
 	public void setAliveCheck(Boolean aliveCheck) {
 		this.aliveCheck = aliveCheck;
 	}
 
-	public Integer getBufferSize() {
-		return bufferSize;
-	}
-
 	public void setBufferSize(Integer bufferSize) {
 		this.bufferSize = bufferSize;
-	}
-
-	public Boolean getFailback() {
-		return failback;
 	}
 
 	public void setFailback(Boolean failback) {
 		this.failback = failback;
 	}
 
-	public Integer getHashingAlg() {
-		return hashingAlg;
-	}
-
 	public void setHashingAlg(Integer hashingAlg) {
 		this.hashingAlg = hashingAlg;
-	}
-
-	public Long getMaxBusyTime() {
-		return maxBusyTime;
 	}
 
 	public void setMaxBusyTime(Long maxBusyTime) {
 		this.maxBusyTime = maxBusyTime;
 	}
 
-	public String getPoolName() {
-		return poolName;
-	}
-
-	public ClassLoader getClassLoader() {
-		return classLoader;
-	}
-
 	public void setClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
-	}
-
-	public ErrorHandler getErrorHandler() {
-		return errorHandler;
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 
-	public Boolean getCompressEnable() {
-		return compressEnable;
-	}
-
 	public void setCompressEnable(Boolean compressEnable) {
 		this.compressEnable = compressEnable;
-	}
-
-	public Long getCompressThreshold() {
-		return compressThreshold;
 	}
 
 	public void setCompressThreshold(Long compressThreshold) {
 		this.compressThreshold = compressThreshold;
 	}
 
-	public String getDefaultEncoding() {
-		return defaultEncoding;
-	}
-
 	public void setDefaultEncoding(String defaultEncoding) {
 		this.defaultEncoding = defaultEncoding;
-	}
-
-	public Boolean getPrimitiveAsString() {
-		return primitiveAsString;
 	}
 
 	public void setPrimitiveAsString(Boolean primitiveAsString) {
 		this.primitiveAsString = primitiveAsString;
 	}
 
-	public Boolean getSanitizeKeys() {
-		return sanitizeKeys;
-	}
-
 	public void setSanitizeKeys(Boolean sanitizeKeys) {
 		this.sanitizeKeys = sanitizeKeys;
 	}
 
-	public TransCoder getTransCoder() {
-		return transCoder;
-	}
-
 	public void setTransCoder(TransCoder transCoder) {
 		this.transCoder = transCoder;
+	}
+
+	public void setCacheExpiryTime(Long cacheExpiryTime) {
+		this.cacheExpiryTime = cacheExpiryTime;
 	}
 
 	public MemcachedManager() {
@@ -351,6 +253,10 @@ public class MemcachedManager implements org.developerworld.commons.cache.CacheM
 		}
 	}
 
+	public Cache getCache() {
+		return getCache(null);
+	}
+
 	public Cache getCache(String cacheName) {
 		MemCachedClient memCachedClient = null;
 		if (poolName == null)
@@ -373,7 +279,9 @@ public class MemcachedManager implements org.developerworld.commons.cache.CacheM
 			memCachedClient.setSanitizeKeys(sanitizeKeys);
 		if (transCoder != null)
 			memCachedClient.setTransCoder(transCoder);
-		return new Memcached(cacheName, memCachedClient);
+		if (cacheExpiryTime != null)
+			return new Memcached(cacheName, memCachedClient, cacheExpiryTime);
+		else
+			return new Memcached(cacheName, memCachedClient);
 	}
-
 }

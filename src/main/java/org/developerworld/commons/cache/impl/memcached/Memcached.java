@@ -1,5 +1,6 @@
 package org.developerworld.commons.cache.impl.memcached;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,14 +20,20 @@ public class Memcached implements org.developerworld.commons.cache.Cache {
 
 	private MemCachedClient memCachedClient;
 	private String keyPrefix;
+	private Long cacheExpiryTime;
 
 	public Memcached(MemCachedClient memCachedClient) {
 		this(null, memCachedClient);
 	}
 
-	public Memcached(String keyPrefix, MemCachedClient memCachedClient) {
+	public Memcached(String cacheName, MemCachedClient memCachedClient) {
+		this(cacheName, memCachedClient, null);
+	}
+
+	public Memcached(String cacheName, MemCachedClient memCachedClient, Long cacheExpiryTime) {
 		this.memCachedClient = memCachedClient;
-		this.keyPrefix = keyPrefix;
+		this.keyPrefix = cacheName;
+		this.cacheExpiryTime = cacheExpiryTime;
 	}
 
 	public MemCachedClient getCache() {
@@ -40,13 +47,28 @@ public class Memcached implements org.developerworld.commons.cache.Cache {
 	 * @return
 	 */
 	private String buildKey(String key) {
-		if (StringUtils.isNotBlank(keyPrefix))
-			return keyPrefix + "_" + key;
-		return key;
+		return getKeyPrefix() + key;
+	}
+
+	/**
+	 * 获取key前缀
+	 * 
+	 * @return
+	 */
+	private String getKeyPrefix() {
+		return keyPrefix == null ? "" : keyPrefix + "_";
 	}
 
 	public void put(String key, Object value) {
-		memCachedClient.add(buildKey(key), value);
+		if (cacheExpiryTime == null && !memCachedClient.add(buildKey(key), value))
+			throw new RuntimeException("can not put the data to cache");
+		else
+			put(key, value, cacheExpiryTime);
+	}
+
+	public void put(String key, Object value, long cacheExpiryTime) {
+		if (!memCachedClient.add(buildKey(key), value, new Date(System.currentTimeMillis() + cacheExpiryTime)))
+			throw new RuntimeException("can not put the data to cache");
 	}
 
 	public Object get(String key) {
@@ -54,33 +76,38 @@ public class Memcached implements org.developerworld.commons.cache.Cache {
 	}
 
 	public void remove(String key) {
-		memCachedClient.delete(buildKey(key));
+		if (!memCachedClient.delete(buildKey(key)))
+			throw new RuntimeException("can not remove the data on cache");
 	}
 
 	public void removeAll() {
-		memCachedClient.flushAll();
+		if (!memCachedClient.flushAll())
+			throw new RuntimeException("can not remove datas on cache");
 	}
 
 	public int size() {
 		int rst = 0;
-		// 获取集群统计信息
-		Map<String, Map<String, String>> statsItems = memCachedClient.statsItems();
-		if (statsItems != null) {
-			Set<Entry<String, Map<String, String>>> statsItemsSet = statsItems.entrySet();
-			for (Entry<String, Map<String, String>> statsItemsEntry : statsItemsSet) {
-				Map<String, String> statsItem = statsItemsEntry.getValue();
-				// 获取单一节点统计信息
-				Set<Entry<String, String>> statsItemSet = statsItem.entrySet();
-				for (Entry<String, String> statsItemEntry : statsItemSet) {
-					// 若是描述节点量，最后一位字符串为number（items:2:number=2）
-					if (statsItemEntry.getKey().endsWith("number")) {
-						// 该slab下的元素个数
-						int limit = Integer.valueOf(statsItemEntry.getValue().trim());
-						rst += limit;
+		if (StringUtils.isBlank(getKeyPrefix())) {
+			// 获取集群统计信息
+			Map<String, Map<String, String>> statsItems = memCachedClient.statsItems();
+			if (statsItems != null) {
+				Set<Entry<String, Map<String, String>>> statsItemsSet = statsItems.entrySet();
+				for (Entry<String, Map<String, String>> statsItemsEntry : statsItemsSet) {
+					Map<String, String> statsItem = statsItemsEntry.getValue();
+					// 获取单一节点统计信息
+					Set<Entry<String, String>> statsItemSet = statsItem.entrySet();
+					for (Entry<String, String> statsItemEntry : statsItemSet) {
+						// 若是描述节点量，最后一位字符串为number（items:2:number=2）
+						if (statsItemEntry.getKey().endsWith("number")) {
+							// 该slab下的元素个数
+							int limit = Integer.valueOf(statsItemEntry.getValue().trim());
+							rst += limit;
+						}
 					}
 				}
 			}
-		}
+		} else
+			rst = getKeys().size();
 		return rst;
 	}
 
@@ -112,7 +139,8 @@ public class Memcached implements org.developerworld.commons.cache.Cache {
 								if (statsCacheDumpEntry != null) {
 									Set<String> keys = statsCacheDumpEntry.keySet();
 									for (String key : keys)
-										rst.add(key.trim());
+										if (key.trim().startsWith(getKeyPrefix()))
+											rst.add(key.trim());
 								}
 							}
 						}

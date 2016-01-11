@@ -10,18 +10,18 @@ import net.sf.ehcache.config.Configuration;
 
 /**
  * EHCache管理类
+ * 
  * @author Roy Huang
- * @version 20111006
  *
  */
-public class EHCacheManager implements
-		org.developerworld.commons.cache.CacheManager {
+public class EHCacheManager implements org.developerworld.commons.cache.CacheManager {
 
 	private String configPath;
 	private URL configUrl;
-	private CacheManager cacheManager;
 	private Configuration configuration;
 	private InputStream configInputStream;
+	private CacheManager cacheManager;
+	private net.sf.ehcache.Cache defauleCache;
 
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
@@ -43,6 +43,10 @@ public class EHCacheManager implements
 		this.cacheManager = cacheManager;
 	}
 
+	public void setDefauleCache(net.sf.ehcache.Cache defauleCache) {
+		this.defauleCache = defauleCache;
+	}
+
 	public void init() {
 		if (cacheManager == null) {
 			if (configuration != null)
@@ -60,11 +64,16 @@ public class EHCacheManager implements
 
 	public void destory() {
 		cacheManager.shutdown();
-		cacheManager=null;
+		cacheManager = null;
+	}
+
+	public Cache getCache() {
+		if(defauleCache==null)
+			throw new RuntimeException("the defauleCache is not found!");
+		return new EHCache(defauleCache);
 	}
 
 	public Cache getCache(String cacheName) {
 		return new EHCache(cacheManager.getCache(cacheName));
 	}
-
 }

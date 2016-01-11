@@ -10,7 +10,6 @@ import net.sf.ehcache.Element;
  * Ehcache内存对象
  * 
  * @author Roy Huang
- * @version 20111006
  * 
  */
 public class EHCache implements org.developerworld.commons.cache.Cache {

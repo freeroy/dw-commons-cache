@@ -3,7 +3,6 @@ package org.developerworld.commons.cache.impl.oscache;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -14,7 +13,6 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  * OSCache缓存类
  * 
  * @author Roy Huang
- * @version 20111007
  * 
  */
 public class OSCache implements org.developerworld.commons.cache.Cache {
@@ -40,11 +38,17 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 	 * @return
 	 */
 	private String buildKey(String key) {
-		if (StringUtils.isNotBlank(keyPrefix))
-			return keyPrefix + "_" + key;
-		return key;
+		return getKeyPrefix() + key;
 	}
 
+	/**
+	 * 获取key前缀
+	 * @return
+	 */
+	private String getKeyPrefix() {
+		return keyPrefix == null ? "" : keyPrefix + "_";
+	}
+	
 	/**
 	 * 返回内部缓存对象
 	 * 
@@ -102,7 +106,7 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 	 * @return
 	 */
 	private String getKeysKey() {
-		return this.getClass().getName() + "_" + keyPrefix + "_keys";
+		return this.getClass().getName() + "_" + getKeyPrefix() + "keys";
 	}
 
 	public void removeAll() {
