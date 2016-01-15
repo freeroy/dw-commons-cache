@@ -60,10 +60,10 @@ public class Memcached implements org.developerworld.commons.cache.Cache {
 	}
 
 	public void put(String key, Object value) {
-		if (cacheExpiryTime == null && !memCachedClient.add(buildKey(key), value))
-			throw new RuntimeException("can not put the data to cache");
-		else
+		if (cacheExpiryTime != null)
 			put(key, value, cacheExpiryTime);
+		else if (!memCachedClient.add(buildKey(key), value))
+			throw new RuntimeException("can not put the data to cache");
 	}
 
 	public void put(String key, Object value, long cacheExpiryTime) {
