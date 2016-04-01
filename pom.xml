@@ -11,7 +11,7 @@
 	<artifactId>dw-commons-cache</artifactId>
 	<packaging>jar</packaging>
 	<name>dw-commons-cache</name>
-	<version>0.1.4</version>
+	<version>0.1.5-SNAPSHOT</version>
 	<description>缓存框架工具包</description>
 
 	<!-- scm配置 -->
