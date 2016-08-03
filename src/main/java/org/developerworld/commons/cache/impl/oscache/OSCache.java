@@ -3,9 +3,6 @@ package org.developerworld.commons.cache.impl.oscache;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 
@@ -16,8 +13,6 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  * 
  */
 public class OSCache implements org.developerworld.commons.cache.Cache {
-
-	private static Log log = LogFactory.getLog(OSCache.class);
 
 	private Cache cache;
 	private String keyPrefix;
@@ -43,12 +38,13 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 
 	/**
 	 * 获取key前缀
+	 * 
 	 * @return
 	 */
 	private String getKeyPrefix() {
 		return keyPrefix == null ? "" : keyPrefix + "_";
 	}
-	
+
 	/**
 	 * 返回内部缓存对象
 	 * 
@@ -68,7 +64,7 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 		try {
 			rst = cache.getFromCache(buildKey(key));
 		} catch (NeedsRefreshException e) {
-			log.error(e);
+			e.printStackTrace();
 		}
 		return rst;
 	}
@@ -89,7 +85,7 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 		try {
 			keys = (Set<String>) cache.getFromCache(keysKey);
 		} catch (NeedsRefreshException e) {
-			log.error(e);
+			e.printStackTrace();
 		}
 		if (keys == null)
 			keys = new LinkedHashSet<String>();
@@ -127,7 +123,7 @@ public class OSCache implements org.developerworld.commons.cache.Cache {
 			if (rst == null)
 				rst = new LinkedHashSet<String>();
 		} catch (NeedsRefreshException e) {
-			log.error(e);
+			e.printStackTrace();
 		}
 		return rst;
 	}

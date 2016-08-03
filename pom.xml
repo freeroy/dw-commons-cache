@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.developerworld.commons</groupId>
 		<artifactId>dw-commons-parent</artifactId>
-		<version>0.0.6</version>
+		<version>0.0.7</version>
 		<relativePath>../dw-commons-parent/pom.xml</relativePath>
 	</parent>
 
@@ -22,31 +22,31 @@
 	</scm>
 
 	<dependencies>
-		<!-- Memcached-Java-Client -->
-		<dependency>
-			<groupId>org.developerworld.3rdparty.memcached</groupId>
-			<artifactId>memcached-java-client</artifactId>
-			<version>2.6.6</version>
-		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
+		<!-- 第三方类库依赖 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Memcached-Java-Client -->
+		<dependency>
+			<groupId>org.developerworld.3rdparty.memcached</groupId>
+			<artifactId>memcached-java-client</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>oscache</artifactId>
+			<scope>provided</scope>
 			<!-- 排除依赖项（不影响编译） -->
 			<exclusions>
 				<exclusion>
@@ -54,10 +54,6 @@
 					<artifactId>jms</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

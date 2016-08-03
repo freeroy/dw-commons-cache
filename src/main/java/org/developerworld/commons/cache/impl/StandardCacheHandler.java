@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.developerworld.commons.cache.Cache;
 import org.developerworld.commons.cache.CacheHandler;
 import org.developerworld.commons.cache.CacheKeyGenerator;
@@ -20,8 +18,6 @@ import org.developerworld.commons.cache.NotInCacheMethod;
  * 
  */
 public class StandardCacheHandler implements CacheHandler {
-
-	private static Log log = LogFactory.getLog(CacheManager.class);
 
 	private CacheManager cacheManager;
 
@@ -59,7 +55,7 @@ public class StandardCacheHandler implements CacheHandler {
 			// 更新缓存记录树
 			updateCacheNode(cacheName, cacheNodes, cacheKey);
 		} catch (Exception e) {
-			log.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -77,7 +73,7 @@ public class StandardCacheHandler implements CacheHandler {
 		try {
 			rst = (T)getFromCache(cacheName, cacheNodes, keyArgs, null);
 		} catch (Throwable e) {
-			log.error(e);
+			throw new RuntimeException(e);
 		}
 		return rst;
 	}
@@ -88,7 +84,7 @@ public class StandardCacheHandler implements CacheHandler {
 		try {
 			rst = (T)getFromCache(cacheName, cacheNodes, cacheKey, null);
 		} catch (Throwable e) {
-			log.error(e);
+			throw new RuntimeException(e);
 		}
 		return rst;
 	}
@@ -107,8 +103,7 @@ public class StandardCacheHandler implements CacheHandler {
 		// 根据key获取数据
 		try {
 			rst = (T) getCache(cacheName).get(cacheKey);
-		} catch (Exception t) {
-			log.error(t);
+		} catch (Throwable t) {
 		}
 		// 若数据不存在，则执行对应方法获取
 		if (rst == null && notInCacheMethod != null) {
@@ -202,7 +197,7 @@ public class StandardCacheHandler implements CacheHandler {
 				tree.clear();
 			}
 		} catch (Throwable t) {
-			log.error(t);
+			throw new RuntimeException(t);
 		}
 	}
 
@@ -213,7 +208,7 @@ public class StandardCacheHandler implements CacheHandler {
 			if (node != null)
 				removeAllCache(cacheName, node, cascadeCacheNode);
 		} catch (Throwable t) {
-			log.error(t);
+			throw new RuntimeException(t);
 		}
 	}
 
@@ -231,7 +226,7 @@ public class StandardCacheHandler implements CacheHandler {
 			if (node != null)
 				removeCache(cacheName, node, cacheKey, cascadeCacheNode);
 		} catch (Throwable t) {
-			log.error(t);
+			throw new RuntimeException(t);
 		}
 	}
 
@@ -291,7 +286,7 @@ public class StandardCacheHandler implements CacheHandler {
 			try {
 				getCache(cacheName).remove(cacheKey);
 			} catch (Throwable t) {
-				log.error(t);
+				t.printStackTrace();
 			}
 			// 删除节点缓存引用
 			cacheNode.getCacheKeys().remove(cacheKey);
@@ -318,7 +313,7 @@ public class StandardCacheHandler implements CacheHandler {
 				try {
 					getCache(cacheName).remove(cacheKey);
 				} catch (Throwable t) {
-					log.error(t);
+					t.printStackTrace();
 				}
 			}
 			cacheNode.getCacheKeys().clear();

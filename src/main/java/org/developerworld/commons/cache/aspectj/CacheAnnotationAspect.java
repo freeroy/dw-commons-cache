@@ -3,8 +3,6 @@ package org.developerworld.commons.cache.aspectj;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.developerworld.commons.cache.CacheHandler;
@@ -23,8 +21,6 @@ import org.developerworld.commons.cache.annotation.Cacheables;
  */
 public class CacheAnnotationAspect {
 
-	private static Log log = LogFactory.getLog(CacheAnnotationAspect.class);
-
 	private CacheHandler cacheHandler;
 
 	public void setCacheHandler(CacheHandler cacheHandler) {
@@ -32,7 +28,7 @@ public class CacheAnnotationAspect {
 	}
 
 	public CacheAnnotationAspect() {
-		log.info(getClass() + " new!");
+		System.out.println(getClass() + " new!");
 	}
 
 	/**
@@ -193,7 +189,7 @@ public class CacheAnnotationAspect {
 							cascadeCacheNode);
 			}
 		} catch (Throwable t) {
-			log.error(t);
+			t.printStackTrace();
 		}
 	}
 }
